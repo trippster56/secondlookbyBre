@@ -1,0 +1,256 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ========================================
+   DESIGN TOKENS — direction 1b, "light and airy"
+   Every value below comes from the build spec agreed with Bre
+   (Cormorant Garamond + Karla, plum on off-white, orchid on interaction).
+   Change a token here, not a hex in a component.
+   ======================================== */
+
+:root {
+  /* ── Colour ─────────────────────────────
+     Plum and orchid are fixed by the logo. Everything else is support. */
+  --plum: #531f55;
+  --plum-mid: #8a3c8d; /* italic emphasis in headlines, link hover */
+  --plum-hover: #7a2e7e; /* the nav pill's hover, which stays plum */
+  --orchid: #eea2f2; /* hover fill and the hero wash only — never text */
+  --orchid-deep: #c86acd; /* sparkles and small accents on light grounds */
+
+  --shell: #fcfafb; /* page background. Not pure white. */
+  --lilac: #f5edf6; /* the alternating section band */
+  --rule: #eadceb; /* 1px borders. Never thicker than 1px. */
+
+  --ink: #47324a; /* body copy */
+  --ink-soft: #6b4e6d; /* sub-copy */
+  --ink-quiet: #9b6c9e; /* eyebrow labels */
+
+  /* Text on a plum or orchid ground. Orchid never carries text itself, so
+     anything sitting on it takes the darkest plum in the system. */
+  --on-plum: #fbf3fc;
+  --on-orchid: #431745;
+
+  /* Disabled + secondary outline, from the button state table. */
+  --muted-fill: #e4d8e5;
+  --muted-ink: #9b8c9c;
+  --outline: #c9a7cb;
+
+  /* ── Type scale ─────────────────────────
+     Mobile first: the desktop step is applied at the 1024px breakpoint
+     below, which is where the spec's full scale kicks in. */
+  --t-h1: 38px;
+  --t-h2: 30px;
+  --t-h3: 24px;
+  --t-lead: 16px;
+  --t-body: 16px;
+  --t-ui: 13px;
+  --t-nav: 15px;
+  --t-eyebrow: 11px;
+
+  /* ── Spacing ────────────────────────────
+     4px base. Use the scale or a multiple of 4 — nothing arbitrary. */
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 28px;
+  --s-4: 44px;
+  --s-5: 72px;
+  --s-6: 100px;
+
+  --radius: 4px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --t-h1: 66px;
+    --t-h2: 44px;
+    --t-h3: 30px;
+    --t-lead: 17px;
+    --t-nav: 12px;
+  }
+}
+
+/* ========================================
+   TAILWIND THEME
+   Maps utilities (bg-plum, text-ink, font-serif, …) onto the tokens above.
+   ======================================== */
+
+@theme inline {
+  --font-sans: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+
+  --color-plum: var(--plum);
+  --color-plum-mid: var(--plum-mid);
+  --color-plum-hover: var(--plum-hover);
+  --color-orchid: var(--orchid);
+  --color-orchid-deep: var(--orchid-deep);
+
+  --color-shell: var(--shell);
+  --color-lilac: var(--lilac);
+  --color-rule: var(--rule);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-quiet: var(--ink-quiet);
+
+  --color-on-plum: var(--on-plum);
+  --color-on-orchid: var(--on-orchid);
+
+  --color-muted-fill: var(--muted-fill);
+  --color-muted-ink: var(--muted-ink);
+  --color-outline: var(--outline);
+
+  /* Semantic tokens the shadcn / Base UI layer reads, mapped onto the brand
+     so library components inherit the site's look rather than neutral grey. */
+  --color-background: var(--shell);
+  --color-foreground: var(--ink);
+  --color-card: var(--shell);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--shell);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--plum);
+  --color-primary-foreground: var(--on-plum);
+  --color-secondary: var(--lilac);
+  --color-secondary-foreground: var(--plum);
+  --color-muted: var(--lilac);
+  --color-muted-foreground: var(--ink-soft);
+  --color-accent: var(--lilac);
+  --color-accent-foreground: var(--plum);
+  --color-destructive: #b3261e;
+  --color-border: var(--rule);
+  --color-input: var(--rule);
+  --color-ring: var(--orchid-deep);
+
+  --radius-sm: 2px;
+  --radius-md: var(--radius);
+  --radius-lg: 6px;
+  --radius-xl: 12px;
+}
+
+@layer base {
+  body {
+    background: var(--shell);
+    color: var(--ink);
+    font-family: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Every headline and paragraph wraps prettily — a spec rule, applied once
+     here rather than as a class on each block. */
+  h1,
+  h2,
+  h3,
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--plum);
+  }
+
+  a:hover {
+    color: var(--plum-mid);
+  }
+
+  /* The focus ring from the button state table, applied site-wide so every
+     interactive element rings the same way. */
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--shell),
+      0 0 0 4px var(--orchid-deep);
+  }
+}
+
+/* ========================================
+   TYPE ROLES
+   The spec's scale as named classes. Tracking scales inversely with size:
+   display sits tight, uppercase UI sits at 0.18–0.3em, nothing in between.
+   ======================================== */
+
+@layer components {
+  .type-h1 {
+    font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+    font-size: var(--t-h1);
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--plum);
+  }
+
+  .type-h2 {
+    font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+    font-size: var(--t-h2);
+    line-height: 1.24;
+    font-weight: 400;
+    color: var(--plum);
+  }
+
+  .type-h3 {
+    font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+    font-size: var(--t-h3);
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--plum);
+  }
+
+  .type-lead {
+    font-size: var(--t-lead);
+    line-height: 1.75;
+    font-weight: 300;
+    color: var(--ink-soft);
+  }
+
+  .type-body {
+    font-size: var(--t-body);
+    line-height: 1.55;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .type-eyebrow {
+    font-size: var(--t-eyebrow);
+    line-height: 1;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-quiet);
+  }
+
+  /* Measure caps: 62ch for paragraphs, 520px for hero sub-copy. */
+  .measure {
+    max-width: 62ch;
+  }
+
+  .measure-lead {
+    max-width: 520px;
+  }
+
+  /* ── Section shell ────────────────────
+     Desktop 100px 48px, mobile 64px 24px, 80px 32px between. Gutters never
+     below 24px. This is the site's only vertical rhythm — a page never sets
+     its own top spacing. */
+  .section {
+    padding: 64px 24px;
+  }
+
+  @media (min-width: 640px) {
+    .section {
+      padding: 80px 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      padding: var(--s-6) 48px;
+    }
+  }
+
+  .section-inner {
+    max-width: 1104px;
+    margin-inline: auto;
+  }
+
+  .section-inner-narrow {
+    max-width: 1000px;
+    margin-inline: auto;
+  }
+}
