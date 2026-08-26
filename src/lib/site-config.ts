@@ -7,6 +7,30 @@
  * anywhere else.
  */
 
+const FALLBACK_SITE_URL = "https://thesecondlookbybre.com";
+
+/**
+ * The canonical origin, no trailing slash.
+ *
+ * `NEXT_PUBLIC_SITE_URL` is read at build time and can arrive in three broken
+ * shapes: absent, present but empty (a Vercel variable added without a value),
+ * or a bare host with no protocol. All three used to reach `new URL()`, which
+ * throws at module load and fails the build while collecting page data. Resolve
+ * them here instead, so a bad variable degrades to the fallback domain.
+ */
+function resolveSiteUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return FALLBACK_SITE_URL;
+
+  const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+
+  try {
+    return new URL(withProtocol).origin;
+  } catch {
+    return FALLBACK_SITE_URL;
+  }
+}
+
 export const siteConfig = {
   // ── Branding ──────────────────────────
   name: "The Second Look",
@@ -38,7 +62,7 @@ export const siteConfig = {
 
   // Canonical origin. No trailing slash.
   // TODO(bre): confirm the domain, then set NEXT_PUBLIC_SITE_URL in Vercel.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://thesecondlookbybre.com",
+  url: resolveSiteUrl(),
 
   // ── Contact ───────────────────────────
   contact: {
