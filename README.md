@@ -156,8 +156,10 @@ place; the corner link opens the original post.
 3. Paste it into `INSTAGRAM_ACCESS_TOKEN` in Vercel, connect a **Blob store** to
    the project (which sets `BLOB_READ_WRITE_TOKEN`), and set `CRON_SECRET` to
    any long random string.
-4. Trigger the first rotation once: `GET /api/instagram/refresh?force=1` with
-   `Authorization: Bearer $CRON_SECRET`.
+4. Start the chain once: `GET /api/instagram/refresh?force=1` with
+   `Authorization: Bearer $CRON_SECRET`. A token straight from the dashboard is
+   under 24 hours old and so cannot be refreshed yet — the route stores it as-is
+   and answers `{"seeded": true}`. That is success; the cron rotates it later.
 
 ### Why it doesn't need touching again
 

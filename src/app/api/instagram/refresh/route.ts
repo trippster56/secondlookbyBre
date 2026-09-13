@@ -19,10 +19,20 @@ import {
  * clock, so a missed day — or ten — costs nothing. Miss 60 days and the chain
  * is broken: a dead token can't be refreshed, and Bre has to reauthorize.
  *
+ * That 24-hour minimum is why the first run *seeds* rather than refreshes. A
+ * token pasted in straight from the App Dashboard is minutes old, so Meta
+ * rejects the exchange; the token is fine, it's just too new. In that case the
+ * seed is written to the store with a 60-day window — safe, because a token too
+ * young to refresh was necessarily issued today — and the cron takes over from
+ * there.
+ *
  * The response never contains the token itself, only when it expires.
  */
 
 const REFRESH_ENDPOINT = "https://graph.instagram.com/refresh_access_token";
+
+/** What Meta issues, and what we assume for a token too young to refresh. */
+const SIXTY_DAYS_IN_SECONDS = 60 * 24 * 60 * 60;
 
 /** Never cached, never prerendered — it mutates the stored token. */
 export const dynamic = "force-dynamic";
@@ -84,6 +94,20 @@ export async function GET(request: Request) {
       // Meta's message says which half is wrong — expired, revoked, or a token
       // from the wrong app — so it's worth surfacing. It carries no secret.
       const message = body.error?.message ?? response.statusText;
+
+      // "must be at least 24 hours old" on a token we have never stored is the
+      // first run, not a failure: record the seed and let the cron rotate it.
+      if (/24 hours/i.test(message) && !stored) {
+        const record = await writeStoredToken(token, SIXTY_DAYS_IN_SECONDS);
+        return NextResponse.json({
+          refreshed: false,
+          seeded: true,
+          note: "Token is under 24 hours old, so it was stored as-is. The cron will rotate it before it expires.",
+          expiresAt: record.expiresAt,
+          daysLeft: daysUntilExpiry(record),
+        });
+      }
+
       console.error(`[instagram] token refresh failed: ${message}`);
       return NextResponse.json(
         { refreshed: false, error: message },
@@ -93,7 +117,7 @@ export async function GET(request: Request) {
 
     const record = await writeStoredToken(
       body.access_token,
-      body.expires_in ?? 60 * 24 * 60 * 60,
+      body.expires_in ?? SIXTY_DAYS_IN_SECONDS,
     );
 
     // The portfolio caches for an hour; drop that cache so the next visitor

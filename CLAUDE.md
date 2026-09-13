@@ -130,8 +130,10 @@ Every new route exports `metadata` built with `pageMetadata()` from
   long-lived tokens die after 60 days and cannot be refreshed once dead. The
   live token lives in a private blob (`lib/instagram-token.ts`), seeded from
   `INSTAGRAM_ACCESS_TOKEN`; the daily cron in `vercel.json` hits
-  `/api/instagram/refresh`, which only acts inside the last 30 days. Never log
-  or return the token — the route deliberately reports expiry dates only. If the
+  `/api/instagram/refresh`, which only acts inside the last 30 days. Meta also
+  refuses to refresh a token under 24 hours old, so the first run seeds the store
+  instead of refreshing (`{"seeded": true}` is a success, not a failure). Never
+  log or return the token — the route deliberately reports expiry dates only. If the
   chain ever lapses, reauthorising in the Meta dashboard is the only fix.
 - **`fill()` before hydration loses its value.** The enquiry form is a
   controlled React island; a Playwright `fill()` that lands pre-hydration is
