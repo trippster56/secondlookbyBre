@@ -63,7 +63,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${karla.variable} ${cormorant.variable}`}>
-      <body>
+      {/*
+        Grammarly and friends stamp their own attributes onto <body> before
+        React hydrates (`data-gr-ext-installed`, `data-new-gr-c-s-check-loaded`),
+        which reads as a hydration mismatch in dev. Suppression here covers this
+        element's own attributes only — children still warn normally.
+      */}
+      <body suppressHydrationWarning>
         <div className="min-h-screen bg-shell">
           <Header />
           <main>{children}</main>
