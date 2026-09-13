@@ -4,7 +4,9 @@ test.describe("take a look", () => {
   test("the gallery renders tiles, each with alt text", async ({ page }) => {
     await page.goto("/take-a-look");
 
-    const images = page.locator("main img");
+    // The stills grid only — the reels feed above it is Instagram's covers,
+    // which are decorative inside a labelled play button.
+    const images = page.locator('[data-testid="stills-grid"] img');
     const count = await images.count();
 
     if (count === 0) {

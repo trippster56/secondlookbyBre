@@ -1,9 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Every image ships from /public, so no remote patterns are needed.
   images: {
     formats: ["image/avif", "image/webp"],
+    // Everything else ships from /public. These two hosts are Instagram's CDN,
+    // which serves the reel covers on /take-a-look — the URLs are signed and
+    // expire, which is why the page revalidates hourly.
+    remotePatterns: [
+      { protocol: "https", hostname: "**.cdninstagram.com" },
+      { protocol: "https", hostname: "**.fbcdn.net" },
+    ],
   },
   poweredByHeader: false,
   async headers() {

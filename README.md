@@ -20,8 +20,10 @@ and packages with the enquiry form.
 | Tests      | Playwright                                    |
 | Hosting    | Vercel                                        |
 
-Every page is statically prerendered; `/api/contact` is the only server
-function.
+Every page is statically prerendered except `/take-a-look`, which revalidates
+hourly to pick up Bre's latest Instagram reels. Two server functions:
+`/api/contact` and `/api/instagram/refresh`, the daily cron that keeps the
+Instagram token alive.
 
 The stack deliberately mirrors [Breliz Designs](../brelizdesigns) — same client,
 same maintainer, so the two sites stay one thing to learn.
@@ -58,6 +60,9 @@ success.
 | `RESEND_API_KEY`       | production | Without it, submissions are logged not sent  |
 | `RESEND_FROM_EMAIL`    | optional   | Defaults to `onboarding@resend.dev`          |
 | `RESEND_TO_EMAIL`      | optional   | Defaults to `siteConfig.contact.email`       |
+| `INSTAGRAM_ACCESS_TOKEN` | optional | Seed token for the reels feed on `/take-a-look` |
+| `BLOB_READ_WRITE_TOKEN` | with the feed | Set by connecting a Blob store; holds the rotated token |
+| `CRON_SECRET`          | with the feed | Bearer token Vercel's cron sends to the refresh route |
 
 ## Layout
 
@@ -74,7 +79,8 @@ src/
 │   ├── icon.svg            # Favicon — the logo's sparkle
 │   ├── apple-icon.png      # Touch icon
 │   ├── opengraph-image.tsx # Social card, generated
-│   └── api/contact/        # Enquiry endpoint (+ dev-only email preview)
+│   ├── api/contact/        # Enquiry endpoint (+ dev-only email preview)
+│   └── api/instagram/      # Daily cron: rotates the Instagram token
 ├── components/
 │   ├── layout/             # Header, Footer
 │   ├── sections/           # Composed, page-level blocks
@@ -82,6 +88,8 @@ src/
 ├── data/                   # Page content: copy, FAQ, packages, gallery
 └── lib/
     ├── site-config.ts      # Brand, contact details, socials, SEO defaults
+    ├── instagram.ts        # The reels feed behind /take-a-look
+    ├── instagram-token.ts  # Where that feed's token lives, and how it rotates
     ├── seo.ts              # Per-page metadata + structured data helpers
     ├── contact-email.ts    # The notification email
     ├── brand-mark.ts       # The sparkle's paths
@@ -132,7 +140,42 @@ structured data is present, navigation on both breakpoints, the enquiry form's
 success, failure, validation and date-picker paths, the gallery's populated and
 empty states, and the contact API's validation.
 
+## The portfolio feed
+
+`/take-a-look` reads Bre's latest reels from Instagram so the portfolio keeps
+itself current — a new reel appears on the site without a deploy. Tiles play in
+place; the corner link opens the original post.
+
+### Setting it up
+
+1. Bre's Instagram (`@thesecondlookbybre`) must be a **professional** account —
+   Creator or Business.
+2. Create an app in the Meta dashboard with **Instagram API with Instagram
+   Login**, authorise her account, and exchange the short-lived token for a
+   long-lived one.
+3. Paste it into `INSTAGRAM_ACCESS_TOKEN` in Vercel, connect a **Blob store** to
+   the project (which sets `BLOB_READ_WRITE_TOKEN`), and set `CRON_SECRET` to
+   any long random string.
+4. Trigger the first rotation once: `GET /api/instagram/refresh?force=1` with
+   `Authorization: Bearer $CRON_SECRET`.
+
+### Why it doesn't need touching again
+
+Meta's long-lived tokens expire after 60 days, so the token has to rotate, and
+environment variables are read-only at runtime. `src/lib/instagram-token.ts`
+therefore keeps the live token in a **private blob**, seeded from
+`INSTAGRAM_ACCESS_TOKEN` on the first run. The cron in `vercel.json` calls
+`/api/instagram/refresh` daily; the route exchanges the token for a fresh 60-day
+one only when fewer than 30 days remain, then revalidates `/take-a-look`. A
+missed day costs nothing.
+
+The one way to break the chain is to let it lapse entirely: an *expired* token
+cannot be refreshed, and Bre has to reauthorise. Nothing else about the feed is
+load-bearing — without a token, an expired one, or a Meta outage, the fetch
+returns an empty list and the page falls back to the stills grid in
+`src/data/gallery.ts`. A broken feed is never a broken page.
+
 ## Still outstanding
 
-See the "Before launch" list in `CLAUDE.md` — real prices, photos, socials,
-the domain and the enquiry inbox are all still placeholders.
+See the "Before launch" list in `CLAUDE.md` — photos, socials, the domain and
+the Instagram token are still outstanding.

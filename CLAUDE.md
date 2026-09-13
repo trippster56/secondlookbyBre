@@ -113,14 +113,26 @@ Every new route exports `metadata` built with `pageMetadata()` from
 - **Every photo on the site is a placeholder.** They came from the design
   session, not from Bre's camera roll, and they are not her work. They are
   fine for layout and must not survive launch — see below.
-- **Package prices are drafts.** `src/data/packages.ts` exports
-  `PLACEHOLDER_PRICING`, which renders the "draft packages" notice on
-  `/pricing` and turns every `TODO` value into a "to be confirmed" chip. The
-  flag exists so nothing false can ship silently. Flip it to `false` only when
-  every figure is real.
+- **Package prices are Bre's, from her pricing guide.** Standard, Premium and
+  Deluxe are hourly with a per-tier minimum, and `PLACEHOLDER_PRICING` in
+  `src/data/packages.ts` is now `false`. The flag and the `TODO`/"to be
+  confirmed" chip in `PackageCard` still work — if a figure ever goes back to
+  being unknown, write `TODO` rather than a guess.
 - **The gallery is empty-safe.** `/take-a-look` renders a "being edited right
   now" state when `galleryItems` is empty, so real work can be dropped in as a
-  data-only change.
+  data-only change. Above it sits the reels feed: `lib/instagram.ts` fetches
+  Bre's latest reels when `INSTAGRAM_ACCESS_TOKEN` is set, which is why that
+  route revalidates hourly instead of being fully static. Every failure there
+  returns an empty list on purpose — an expired token must degrade to the
+  stills grid, never to an error page. When reels render, the stills grid's
+  empty state is suppressed (it would be untrue).
+- **The Instagram token rotates itself, and that is the fragile part.** Meta's
+  long-lived tokens die after 60 days and cannot be refreshed once dead. The
+  live token lives in a private blob (`lib/instagram-token.ts`), seeded from
+  `INSTAGRAM_ACCESS_TOKEN`; the daily cron in `vercel.json` hits
+  `/api/instagram/refresh`, which only acts inside the last 30 days. Never log
+  or return the token — the route deliberately reports expiry dates only. If the
+  chain ever lapses, reauthorising in the Meta dashboard is the only fix.
 - **`fill()` before hydration loses its value.** The enquiry form is a
   controlled React island; a Playwright `fill()` that lands pre-hydration is
   overwritten when React takes over. `tests/inquire.spec.ts` has a `fillField`
@@ -132,12 +144,13 @@ Everything below is a placeholder with a `TODO(bre)` marker in the code:
 
 1. **Domain** — `NEXT_PUBLIC_SITE_URL`. `site-config.ts` assumes
    `thesecondlookbybre.com`.
-2. **Enquiry inbox** — `siteConfig.contact.email`, plus `RESEND_TO_EMAIL` and
-   `RESEND_FROM_EMAIL` in Vercel. Until the key is set, enquiries are logged,
-   not delivered.
+2. **Enquiry delivery** — the inbox is `thesecondlookbybre@gmail.com`, but
+   `RESEND_API_KEY` still has to be set in Vercel (with `RESEND_FROM_EMAIL` on
+   a verified domain). Until it is, enquiries are logged, not delivered.
 3. **Social URLs** — Instagram, TikTok and Facebook in `siteConfig.socials`.
-4. **Package prices, coverage and turnaround** — `src/data/packages.ts`, then
-   set `PLACEHOLDER_PRICING = false`.
+4. **The Instagram token** — `INSTAGRAM_ACCESS_TOKEN`, a connected Blob store
+   and `CRON_SECRET` in Vercel, then one forced refresh to start the rotation.
+   See "The portfolio feed" in the README.
 5. **Photography** — the hero trio (`src/data/home.ts`), the about portrait
    (`components/sections/AboutBre.tsx`) and every gallery item
    (`src/data/gallery.ts`). Replace with Bre's real work, and rewrite the alt
