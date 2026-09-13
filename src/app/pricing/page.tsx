@@ -30,9 +30,9 @@ export default function PricingPage() {
               Wedding content, built around your day.
             </h1>
             <p className="type-lead measure">
-              Every wedding runs differently, so every package is quoted for the
-              day in front of it. Tell me what yours looks like and I’ll come
-              back with what fits.
+              Every package is priced by the hour with a minimum, so you only
+              book the part of the day you want covered. Tell me what yours
+              looks like and I’ll come back with what fits.
             </p>
           </div>
 

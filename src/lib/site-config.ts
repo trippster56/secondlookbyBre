@@ -66,13 +66,17 @@ export const siteConfig = {
 
   // ── Contact ───────────────────────────
   contact: {
-    // TODO(bre): the inbox enquiries should land in. Until this is confirmed,
-    // /api/contact falls back to logging rather than sending.
-    email: "hello@thesecondlookbybre.com",
+    // Enquiries land here. `RESEND_TO_EMAIL` overrides it in production if the
+    // inbox ever moves; without `RESEND_API_KEY`, /api/contact logs instead of
+    // sending.
+    email: "thesecondlookbybre@gmail.com",
   },
 
   // ── Social ────────────────────────────
-  // TODO(bre): real handles. The footer links these three, in this order.
+  // Instagram is confirmed — it is also the account the portfolio's reels feed
+  // reads, though the feed follows whoever authorised the token, not this URL.
+  // TODO(bre): confirm the TikTok and Facebook handles.
+  // The footer links these three, in this order.
   socials: {
     instagram: "https://www.instagram.com/thesecondlookbybre/",
     tiktok: "https://www.tiktok.com/@thesecondlookbybre",

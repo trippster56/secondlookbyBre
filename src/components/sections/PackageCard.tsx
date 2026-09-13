@@ -25,7 +25,7 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
         {pkg.featured && (
           <p className="type-eyebrow flex items-center gap-2 text-plum-mid">
             <Sparkle className="h-2.5 w-2.5" />
-            Most booked
+            A good place to start
           </p>
         )}
         <h3 className="type-h3">{pkg.name}</h3>

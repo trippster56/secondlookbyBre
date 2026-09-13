@@ -1,81 +1,76 @@
 /**
- * ⚠️ PLACEHOLDER PRICING — NOT BRE'S NUMBERS.
+ * The three packages, transcribed from Bre's pricing guide (the PRICING GUIDE
+ * card she sent, September 2026).
  *
- * The brief has no package tiers yet, so these three are drafted structure,
- * not quoted prices. Every figure below is marked TODO on purpose: the site
- * renders the marker verbatim, so nothing false can reach a couple's screen
- * while the real numbers are still outstanding.
- *
- * To go live: replace `price` and `turnaround` on each tier with the real
- * values, delete the TODO comments, and check `PLACEHOLDER_PRICING` below is
- * flipped to false — that flag is what renders the "draft" notice on the
- * pricing page.
+ * Pricing is hourly with a minimum per tier; the tiers differ only in the rate,
+ * the minimum, and how many edited videos are included. The bullets are her
+ * wording from the guide — fix a typo, but don't rewrite them.
  */
 
-export const PLACEHOLDER_PRICING = true;
+/**
+ * Flips the "draft packages" notice on /pricing, and turns any `TODO` value
+ * into a "to be confirmed" chip. Real numbers are in, so it is off.
+ */
+export const PLACEHOLDER_PRICING = false;
 
 export interface Package {
   id: string;
   name: string;
   /** One line on who the tier suits. */
   summary: string;
-  /** TODO(bre): real price. */
+  /** Hourly rate. */
   price: string;
-  /** Coverage window. TODO(bre): confirm hours. */
+  /** The booking minimum for this tier. */
   hours: string;
-  /** TODO(bre): real turnaround, raw and edited. */
+  /** The delivery window shown on the card; the bullets carry the detail. */
   turnaround: string;
   includes: string[];
-  /** The middle tier is the one most couples land on — say so, once. */
+  /** The tier the page leads with. One only. */
   featured?: boolean;
 }
 
 export const packages: Package[] = [
   {
-    id: "highlight",
-    name: "The Highlight",
+    id: "standard",
+    name: "Standard",
     summary:
-      "The parts of the day you would most want back: getting ready through the first dance.",
-    price: "TODO",
-    hours: "TODO — half day",
-    turnaround: "TODO",
+      "Everything from the hours you book, plus one edit ready to post.",
+    price: "$75/hour",
+    hours: "4-hour minimum",
+    turnaround: "24–48 hours",
     includes: [
-      "Behind-the-scenes coverage of the moments you choose",
-      "Candid photos and vertical video clips",
-      "A set of edited short-form videos ready to post",
-      "Your full camera roll, delivered digitally",
+      "All usable, unedited photos + video clips delivered within 24 hours",
+      "1 edited, ready-to-post video delivered within 24–48 hours",
+      "Pre-wedding consultation to discuss timeline, vision + must-have content",
     ],
   },
   {
-    id: "full-day",
-    name: "The Full Day",
+    id: "premium",
+    name: "Premium",
     summary:
-      "Getting ready, details, ceremony, reception, and everything in between.",
-    price: "TODO",
-    hours: "TODO — full day",
-    turnaround: "TODO",
+      "A longer day covered, and two edits to tell it properly.",
+    price: "$100/hour",
+    hours: "5-hour minimum",
+    turnaround: "24–48 hours",
     includes: [
-      "Full-day behind-the-scenes coverage",
-      "Candid photos and vertical video clips throughout",
-      "Getting ready, details, ceremony, reception + everything in between",
-      "Edited short-form videos/Reels, social-media-ready",
-      "A camera roll full of moments ready to relive and share",
+      "All usable, unedited photos + video clips delivered within 24 hours",
+      "2 edited, ready-to-post videos delivered within 24–48 hours",
+      "Pre-wedding consultation to discuss timeline, vision + must-have content",
     ],
     featured: true,
   },
   {
-    id: "weekend",
-    name: "The Weekend",
+    id: "deluxe",
+    name: "Deluxe",
     summary:
-      "For couples whose wedding is a weekend — rehearsal, welcome party and the day itself.",
-    price: "TODO",
-    hours: "TODO — multi-day",
-    turnaround: "TODO",
+      "The fullest coverage, with three edits across the whole day.",
+    price: "$125/hour",
+    hours: "6-hour minimum",
+    turnaround: "24–48 hours",
     includes: [
-      "Everything in The Full Day",
-      "Rehearsal dinner and welcome party coverage",
-      "A same-night teaser posted while the weekend is still happening",
-      "Extended edit set across the whole weekend",
+      "All usable, unedited photos + video clips delivered within 24 hours",
+      "3 edited, ready-to-post videos delivered within 24–48 hours",
+      "Pre-wedding consultation to discuss timeline, vision + must-have content",
     ],
   },
 ];
