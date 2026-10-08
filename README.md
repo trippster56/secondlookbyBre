@@ -179,5 +179,5 @@ returns an empty list and the page falls back to the stills grid in
 
 ## Still outstanding
 
-See the "Before launch" list in `CLAUDE.md` — photos, socials, the domain and
-the Instagram token are still outstanding.
+See the "Before launch" list in `CLAUDE.md` — socials, the domain (and the
+Resend sender on it) and the Instagram token are still outstanding.

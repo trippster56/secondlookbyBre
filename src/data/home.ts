@@ -47,20 +47,23 @@ export const closing = {
 /**
  * The hero's photo trio: one 9:16 arch and two 4:3 crops.
  *
- * TODO(bre): placeholders from the design session — replace with real work.
- * Alt text describes the moment, not the composition.
+ * Bre's own work, shared with the gallery. Alt text describes the moment, not
+ * the composition. The arch's `position` is its focal point: on phones the
+ * arch crops to near-square, and centred it would cut the couple off at the
+ * shoulders.
  */
 export const heroPhotos = {
   arch: {
-    src: "/images/hero-arch.jpg",
-    alt: "A bridesmaid pinning the bride’s veil in place at the dressing table",
+    src: "/images/gallery/sparkler-exit.jpg",
+    alt: "The newlyweds walking hand in hand out of the barn through a tunnel of guests’ sparklers",
+    position: "50% 72%",
   },
   detail: {
-    src: "/images/hero-detail.jpg",
-    alt: "The invitation suite laid out with both wedding bands and a sprig of greenery",
+    src: "/images/gallery/cake-florals.jpg",
+    alt: "A three-tier buttercream cake dressed with garden roses and blue delphinium",
   },
   reception: {
-    src: "/images/hero-reception.jpg",
-    alt: "The bride with a hand in the air on a packed dance floor under string lights",
+    src: "/images/gallery/dance-floor-batons.jpg",
+    alt: "Guests waving light-up foam batons on the dance floor beneath draped ceiling fabric",
   },
 } as const;

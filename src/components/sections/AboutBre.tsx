@@ -15,11 +15,9 @@ export default function AboutBre() {
       <div className="section-inner grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-[72px]">
         <div className="lg:sticky lg:top-12 lg:self-start">
           <div className="relative aspect-[4/5] overflow-hidden rounded-t-[200px] rounded-b-[6px]">
-            {/* TODO(bre): a photo of you — this placeholder is a guest filming
-                the first dance, which is the idea but not the person. */}
             <Image
-              src="/images/about-filming.jpg"
-              alt="A guest filming the first dance on her phone from the head table"
+              src="/images/about-bre.jpg"
+              alt="Bre in her wedding gown and veil, holding a winter bouquet of red roses, magnolia and evergreen"
               fill
               sizes="(min-width: 1024px) 40vw, 100vw"
               className="object-cover"

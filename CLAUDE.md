@@ -110,9 +110,12 @@ Every new route exports `metadata` built with `pageMetadata()` from
   same paths inline because a static file has to be self-contained — **keep
   the two in step**, and re-render `public/images/icon-*.png` from `icon.svg`
   if the paths change.
-- **Every photo on the site is a placeholder.** They came from the design
-  session, not from Bre's camera roll, and they are not her work. They are
-  fine for layout and must not survive launch — see below.
+- **The photos are Bre's, and the about portrait is of her, not by her.** The
+  hero and gallery are her own wedding-day shots; the hero reuses gallery files
+  rather than keeping copies. The about portrait is a professional bridal
+  portrait of Bre, so it never belongs in the gallery. Before adding a photo,
+  rotate it upright, cap the long edge near 2000px and strip its EXIF — files in
+  `public/` are served as-is, and phone photos can carry GPS.
 - **Package prices are Bre's, from her pricing guide.** Standard, Premium and
   Deluxe are hourly with a per-tier minimum, and `PLACEHOLDER_PRICING` in
   `src/data/packages.ts` is now `false`. The flag and the `TODO`/"to be
@@ -146,14 +149,13 @@ Everything below is a placeholder with a `TODO(bre)` marker in the code:
 
 1. **Domain** — `NEXT_PUBLIC_SITE_URL`. `site-config.ts` assumes
    `thesecondlookbybre.com`.
-2. **Enquiry delivery** — the inbox is `thesecondlookbybre@gmail.com`, but
-   `RESEND_API_KEY` still has to be set in Vercel (with `RESEND_FROM_EMAIL` on
-   a verified domain). Until it is, enquiries are logged, not delivered.
+2. **Enquiry delivery** — live in Resend test mode: `RESEND_API_KEY` is set in
+   Vercel and enquiries reach `thesecondlookbybre@gmail.com` from
+   `onboarding@resend.dev`. That only works because the Resend account is
+   Bre's own address — test mode refuses any other recipient. Still to do:
+   verify the domain in Resend, set `RESEND_FROM_EMAIL` to an address on it,
+   and set `RESEND_TO_EMAIL` if enquiries should go anywhere but the Gmail.
 3. **Social URLs** — Instagram, TikTok and Facebook in `siteConfig.socials`.
 4. **The Instagram token** — `INSTAGRAM_ACCESS_TOKEN`, a connected Blob store
    and `CRON_SECRET` in Vercel, then one forced refresh to start the rotation.
    See "The portfolio feed" in the README.
-5. **Photography** — the hero trio (`src/data/home.ts`), the about portrait
-   (`components/sections/AboutBre.tsx`) and every gallery item
-   (`src/data/gallery.ts`). Replace with Bre's real work, and rewrite the alt
-   text to describe the actual moment.

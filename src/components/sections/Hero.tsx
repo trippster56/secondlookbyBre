@@ -64,6 +64,7 @@ export default function Hero() {
               priority
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 40vw, 100vw"
               className="object-cover"
+              style={{ objectPosition: heroPhotos.arch.position }}
             />
           </div>
           <div className="relative h-[150px] overflow-hidden rounded-[6px] lg:h-[210px]">
