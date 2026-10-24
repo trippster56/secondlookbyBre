@@ -69,7 +69,7 @@ visitor to the top of the page.
 
 ### Content is data
 
-Copy, FAQ answers, packages and gallery items belong in `src/data/`. Brand
+Copy, FAQ answers and packages belong in `src/data/`. Brand
 details, contact info, socials and SEO defaults belong in
 `src/lib/site-config.ts`. A copy change should never require touching a
 component.
@@ -111,9 +111,9 @@ Every new route exports `metadata` built with `pageMetadata()` from
   the two in step**, and re-render `public/images/icon-*.png` from `icon.svg`
   if the paths change.
 - **The photos are Bre's, and the about portrait is of her, not by her.** The
-  hero and gallery are her own wedding-day shots; the hero reuses gallery files
-  rather than keeping copies. The about portrait is a professional bridal
-  portrait of Bre, so it never belongs in the gallery. Before adding a photo,
+  hero trio is her own wedding-day shots (the files sit in `images/gallery/`,
+  from when the portfolio had a stills grid). The about portrait is a
+  professional bridal portrait of Bre, not her work. Before adding a photo,
   rotate it upright, cap the long edge near 2000px and strip its EXIF — files in
   `public/` are served as-is, and phone photos can carry GPS.
 - **Package prices are Bre's, from her pricing guide.** Standard, Premium and
@@ -121,14 +121,13 @@ Every new route exports `metadata` built with `pageMetadata()` from
   `src/data/packages.ts` is now `false`. The flag and the `TODO`/"to be
   confirmed" chip in `PackageCard` still work — if a figure ever goes back to
   being unknown, write `TODO` rather than a guess.
-- **The gallery is empty-safe.** `/take-a-look` renders a "being edited right
-  now" state when `galleryItems` is empty, so real work can be dropped in as a
-  data-only change. Above it sits the reels feed: `lib/instagram.ts` fetches
-  Bre's latest reels when `INSTAGRAM_ACCESS_TOKEN` is set, which is why that
-  route revalidates hourly instead of being fully static. Every failure there
-  returns an empty list on purpose — an expired token must degrade to the
-  stills grid, never to an error page. When reels render, the stills grid's
-  empty state is suppressed (it would be untrue).
+- **The portfolio is Instagram.** `/take-a-look` shows Bre's six latest reels
+  from `lib/instagram.ts`, then a "See more on Instagram" link to her profile —
+  there is no stills grid. The route revalidates hourly instead of being fully
+  static. Reels set to Instagram's licensed music come without a video file,
+  so those tiles link out to the post instead of playing in place. Every
+  failure in the fetch returns an empty list on purpose — an expired token
+  must degrade to just the link out, never to an error page.
 - **The Instagram token rotates itself, and that is the fragile part.** Meta's
   long-lived tokens die after 60 days and cannot be refreshed once dead. The
   live token lives in a private blob (`lib/instagram-token.ts`), seeded from

@@ -85,7 +85,7 @@ src/
 │   ├── layout/             # Header, Footer
 │   ├── sections/           # Composed, page-level blocks
 │   └── ui/                 # Primitives (Button, Field, Sparkle, icons)
-├── data/                   # Page content: copy, FAQ, packages, gallery
+├── data/                   # Page content: copy, FAQ, packages
 └── lib/
     ├── site-config.ts      # Brand, contact details, socials, SEO defaults
     ├── instagram.ts        # The reels feed behind /take-a-look
@@ -137,14 +137,16 @@ BASE_URL=http://localhost:3000 npx playwright test
 Run `npx playwright test` on its own and it will start the dev server itself.
 Coverage: every route renders with a single `<h1>` and complete metadata,
 structured data is present, navigation on both breakpoints, the enquiry form's
-success, failure, validation and date-picker paths, the gallery's populated and
-empty states, and the contact API's validation.
+success, failure, validation and date-picker paths, the portfolio's reel cap
+and Instagram link, and the contact API's validation.
 
 ## The portfolio feed
 
 `/take-a-look` reads Bre's latest reels from Instagram so the portfolio keeps
-itself current — a new reel appears on the site without a deploy. Tiles play in
-place; the corner link opens the original post.
+itself current — a new reel appears on the site without a deploy. It shows the
+six latest, then links out to her profile. Tiles play in place and the corner
+link opens the original post; reels set to Instagram's licensed music can't be
+played off-platform, so those tiles link straight to the post.
 
 ### Setting it up
 
@@ -174,8 +176,8 @@ missed day costs nothing.
 The one way to break the chain is to let it lapse entirely: an *expired* token
 cannot be refreshed, and Bre has to reauthorise. Nothing else about the feed is
 load-bearing — without a token, an expired one, or a Meta outage, the fetch
-returns an empty list and the page falls back to the stills grid in
-`src/data/gallery.ts`. A broken feed is never a broken page.
+returns an empty list and the page is left with its "See more on Instagram"
+link. A broken feed is never a broken page.
 
 ## Still outstanding
 

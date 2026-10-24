@@ -1,25 +1,24 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("take a look", () => {
-  test("the gallery renders tiles, each with alt text", async ({ page }) => {
+  test("the reels are capped at six and the rest are a link away", async ({
+    page,
+  }) => {
     await page.goto("/take-a-look");
 
-    // The stills grid only — the reels feed above it is Instagram's covers,
-    // which are decorative inside a labelled play button.
-    const images = page.locator('[data-testid="stills-grid"] img');
-    const count = await images.count();
+    // Every tile is either a play button or a link out; without a token there
+    // are none, and the page is just the link to Instagram.
+    const tiles = page.locator(
+      'button[aria-label^="Play reel"], a[aria-label^="Watch on Instagram"]',
+    );
+    expect(await tiles.count()).toBeLessThanOrEqual(6);
 
-    if (count === 0) {
-      // The empty-safe path: while there is no work to show, the page says so
-      // rather than rendering a broken grid.
-      await expect(page.getByText(/being edited right now/i)).toBeVisible();
-      return;
-    }
-
-    expect(count).toBeGreaterThan(0);
-    for (let i = 0; i < count; i += 1) {
-      await expect(images.nth(i)).toHaveAttribute("alt", /.{10,}/);
-    }
+    const more = page.getByRole("link", { name: /See more on Instagram/i });
+    await expect(more).toBeVisible();
+    await expect(more).toHaveAttribute(
+      "href",
+      /instagram\.com\/thesecondlookbybre/,
+    );
   });
 
   test("the page closes with the site's one primary action", async ({ page }) => {

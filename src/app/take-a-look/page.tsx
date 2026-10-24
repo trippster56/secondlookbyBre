@@ -1,10 +1,11 @@
 import ClosingBand from "@/components/sections/ClosingBand";
-import GalleryGrid from "@/components/sections/GalleryGrid";
 import ReelsFeed from "@/components/sections/ReelsFeed";
+import { InstagramIcon } from "@/components/ui/brand-icons";
+import { ButtonLink } from "@/components/ui/button";
 import Sparkle from "@/components/ui/sparkle";
-import { galleryItems } from "@/data/gallery";
 import { fetchInstagramReels } from "@/lib/instagram";
 import { pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 
 export const metadata = pageMetadata({
   title: "Take a Look",
@@ -19,8 +20,9 @@ export const metadata = pageMetadata({
 
 /**
  * The one route that isn't fully static: the reels come from Instagram, so the
- * page rebuilds itself hourly. With no `INSTAGRAM_ACCESS_TOKEN` the fetch
- * returns nothing and this is a static page again.
+ * page rebuilds itself hourly. The portfolio is Instagram — the six latest
+ * reels here, everything else one click away on her profile. With no token the
+ * fetch returns nothing and the page is just the link out.
  */
 // Must be a literal — Next reads this statically, so it can't be imported.
 // Keep it in step with `INSTAGRAM_REVALIDATE_SECONDS` in lib/instagram.ts.
@@ -28,11 +30,6 @@ export const revalidate = 3600;
 
 export default async function TakeALookPage() {
   const reels = await fetchInstagramReels();
-
-  // With reels on the page, an empty stills grid has nothing to apologise for —
-  // its "being edited right now" state would read as false. Show it only when
-  // there are stills, or when there is nothing else on the page.
-  const showStills = galleryItems.length > 0 || reels.length === 0;
 
   return (
     <>
@@ -50,19 +47,18 @@ export default async function TakeALookPage() {
             </p>
           </div>
 
-          {reels.length > 0 && (
-            <div className="flex flex-col gap-6">
-              <p className="type-eyebrow">Straight from Instagram</p>
-              <ReelsFeed reels={reels} />
-            </div>
-          )}
+          <ReelsFeed reels={reels} />
 
-          {showStills && (
-            <div className="flex flex-col gap-6" data-testid="stills-grid">
-              {reels.length > 0 && <p className="type-eyebrow">Stills</p>}
-              <GalleryGrid />
-            </div>
-          )}
+          <ButtonLink
+            href={siteConfig.socials.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            tone="secondary"
+            className="self-center max-sm:w-full"
+          >
+            <InstagramIcon className="h-4 w-4" />
+            See more on Instagram
+          </ButtonLink>
         </div>
       </section>
 

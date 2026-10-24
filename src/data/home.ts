@@ -47,7 +47,7 @@ export const closing = {
 /**
  * The hero's photo trio: one 9:16 arch and two 4:3 crops.
  *
- * Bre's own work, shared with the gallery. Alt text describes the moment, not
+ * Bre's own work. Alt text describes the moment, not
  * the composition. The arch's `position` is its focal point: on phones the
  * arch crops to near-square, and centred it would cut the couple off at the
  * shoulders.

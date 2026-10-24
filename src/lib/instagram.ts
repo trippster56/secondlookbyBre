@@ -9,8 +9,8 @@
  * Login — a professional account, an app in the Meta dashboard, then a 60-day
  * token). `lib/instagram-token.ts` owns where that token lives and the cron in
  * `api/instagram/refresh` rotates it, so nobody has to. Without a token this
- * returns an empty list and the portfolio falls back to the stills grid, so the
- * site never depends on it.
+ * returns an empty list and the portfolio shows only its link to Instagram, so
+ * the site never depends on it.
  *
  * Every failure path is swallowed on purpose: an expired token or a Meta
  * outage must not take the portfolio page down with it.
@@ -35,8 +35,12 @@ export const INSTAGRAM_REVALIDATE_SECONDS = 3600;
 
 export interface InstagramReel {
   id: string;
-  /** The mp4, played inline when a tile is opened. */
-  videoUrl: string;
+  /**
+   * The mp4, played inline when a tile is opened. Absent when Instagram
+   * withholds it — reels set to licensed music from its audio library can't be
+   * played off-platform — and those tiles link out to the post instead.
+   */
+  videoUrl?: string;
   /** The still shown before playback. */
   posterUrl: string;
   /** The original post, linked from each tile. */
@@ -62,9 +66,7 @@ function firstLine(caption: string | undefined): string {
   return line.length > 120 ? `${line.slice(0, 117)}…` : line;
 }
 
-export async function fetchInstagramReels(
-  limit = 6,
-): Promise<InstagramReel[]> {
+export async function fetchInstagramReels(limit = 6): Promise<InstagramReel[]> {
   const token = await readAccessToken();
   if (!token) return [];
 
@@ -90,8 +92,8 @@ export async function fetchInstagramReels(
 
     return (body.data ?? [])
       .filter(
-        (item): item is GraphMedia & { media_url: string; permalink: string } =>
-          Boolean(item.media_url) &&
+        (item): item is GraphMedia & { permalink: string } =>
+          Boolean(item.thumbnail_url ?? item.media_url) &&
           Boolean(item.permalink) &&
           (item.media_product_type === "REELS" || item.media_type === "VIDEO"),
       )
@@ -100,7 +102,7 @@ export async function fetchInstagramReels(
         id: item.id,
         videoUrl: item.media_url,
         // Reels always carry a thumbnail; fall back to the video's first frame.
-        posterUrl: item.thumbnail_url ?? item.media_url,
+        posterUrl: (item.thumbnail_url ?? item.media_url) as string,
         permalink: item.permalink,
         caption: firstLine(item.caption),
       }));
